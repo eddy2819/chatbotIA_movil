@@ -114,14 +114,20 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       SizedBox(height: 20),
-                     Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Expanded(child: _buildInfoCard('110', 'Mg/dl', 'Glucosa Normal')),
+                          Expanded(
+                              child: _buildInfoCard(
+                                  '110', 'Mg/dl', 'Glucosa Normal')),
                           SizedBox(width: 10),
-                          Expanded(child: _buildInfoCard('200', 'Mg/dl', 'Glucosa muy alta')),
+                          Expanded(
+                              child: _buildInfoCard(
+                                  '200', 'Mg/dl', 'Glucosa muy alta')),
                           SizedBox(width: 10),
-                          Expanded(child: _buildInfoCard('70', 'Mg/dl', 'Glucosa muy baja')),
+                          Expanded(
+                              child: _buildInfoCard(
+                                  '70', 'Mg/dl', 'Glucosa muy baja')),
                         ],
                       ),
                     ],
@@ -144,8 +150,11 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Container(
                             width: (MediaQuery.of(context).size.width / 2) - 26,
-                            child: _buildStyledInfoCard('3', 'Farmacias cercanas',
-                                'Sugerencias de Farmacias', Icons.local_pharmacy),
+                            child: _buildStyledInfoCard(
+                                '3',
+                                'Farmacias cercanas',
+                                'Sugerencias de Farmacias',
+                                Icons.local_pharmacy),
                           ),
                         ],
                       ),
@@ -157,8 +166,11 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Container(
                             width: (MediaQuery.of(context).size.width / 2) - 26,
-                            child: _buildStyledInfoCard('28/11/2024\n07:30 am', '',
-                                'Proxima cita Médica', Icons.calendar_today),
+                            child: _buildStyledInfoCard(
+                                '28/11/2024\n07:30 am',
+                                '',
+                                'Proxima cita Médica',
+                                Icons.calendar_today),
                           ),
                           Container(
                             width: (MediaQuery.of(context).size.width / 2) - 26,

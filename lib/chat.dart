@@ -13,7 +13,7 @@ class ChatScreen extends StatelessWidget {
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.menu, color: Colors.black),
+          icon: Icon(Icons.warning, color: Color.fromARGB(255, 90, 32, 32)),
           onPressed: () {},
         ),
         actions: [

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Importar paquete para cambiar el color de la barra de estado
 import 'home.dart';
 
-
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -17,14 +16,17 @@ class _LoginPageState extends State<LoginPage> {
     _passwordVisible = false;
 
     // Cambiar el color de la barra de estado y la barra de navegación
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.white, // Color de la barra de estado
-      statusBarIconBrightness:
-          Brightness.dark, // Color de los íconos de la barra de estado
-      systemNavigationBarColor: Colors.white, // Color de la barra de navegación
-      systemNavigationBarIconBrightness:
-          Brightness.dark, // Color de los íconos de la barra de navegación
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.white, // Color de la barra de estado
+        statusBarIconBrightness:
+            Brightness.dark, // Color de los íconos de la barra de estado
+        systemNavigationBarColor:
+            Colors.white, // Color de la barra de navegación
+        systemNavigationBarIconBrightness:
+            Brightness.dark, // Color de los íconos de la barra de navegación
+      ),
+    );
   }
 
   @override
@@ -53,7 +55,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               SizedBox(height: 16),
-
               // Email Input
               TextField(
                 decoration: InputDecoration(
@@ -66,7 +67,6 @@ class _LoginPageState extends State<LoginPage> {
                 keyboardType: TextInputType.emailAddress,
               ),
               SizedBox(height: 16),
-
               // Password Input
               TextField(
                 decoration: InputDecoration(
@@ -91,7 +91,6 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: !_passwordVisible,
               ),
               SizedBox(height: 8),
-
               // Remember Me and Forgot Password
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,7 +118,6 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
               SizedBox(height: 16),
-
               // Login Button
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -138,12 +136,12 @@ class _LoginPageState extends State<LoginPage> {
                 child: Text(
                   'Iniciar Sesion',
                   style: TextStyle(
-                      fontSize: 16,
-                      color: const Color.fromARGB(255, 37, 36, 36)),
+                    fontSize: 16,
+                    color: const Color.fromARGB(255, 37, 36, 36),
+                  ),
                 ),
               ),
               SizedBox(height: 16),
-
               // Sign Up
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -151,8 +149,10 @@ class _LoginPageState extends State<LoginPage> {
                   Text("No tienes una cuenta? "),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context,
-                          '/register'); // Navegar a la página de registro
+                      Navigator.pushNamed(
+                        context,
+                        '/register',
+                      ); // Navegar a la página de registro
                     },
                     child: Text(
                       'Registrate',
@@ -162,7 +162,6 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
               SizedBox(height: 24),
-
               // Continue With
               Row(
                 children: [
@@ -175,7 +174,6 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
               SizedBox(height: 16),
-
               // Social Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
