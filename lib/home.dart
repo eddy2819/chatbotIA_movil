@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Importar paquete para cambiar el color de la barra de estado
 import 'package:chatbotia_movil/chat_home.dart';
+import 'package:chatbotia_movil/chat.dart'; // Import the file where Chat is defined
 
 void main() {
   runApp(AssisMedApp());
 }
 
 class AssisMedApp extends StatelessWidget {
+  const AssisMedApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,6 +25,8 @@ class AssisMedApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -72,7 +77,14 @@ class _HomePageState extends State<HomePage> {
                 size: 31, // Increased icon size
               ),
               onPressed: () {
-                // Acción para el ícono de notificaciones
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Chat(
+                      initialMessage: 'Quisiera saber mis Recordatorios',
+                    ),
+                  ),
+                );
               },
             ),
           ),
@@ -143,12 +155,12 @@ class _HomePageState extends State<HomePage> {
                         runSpacing: 10,
                         alignment: WrapAlignment.spaceBetween,
                         children: [
-                          Container(
+                          SizedBox(
                             width: (MediaQuery.of(context).size.width / 2) - 26,
                             child: _buildStyledInfoCard('110', 'Mg/dl',
                                 'Nivel de glucosa', Icons.bloodtype),
                           ),
-                          Container(
+                          SizedBox(
                             width: (MediaQuery.of(context).size.width / 2) - 26,
                             child: _buildStyledInfoCard(
                                 '3',
@@ -164,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                         runSpacing: 10,
                         alignment: WrapAlignment.spaceBetween,
                         children: [
-                          Container(
+                          SizedBox(
                             width: (MediaQuery.of(context).size.width / 2) - 26,
                             child: _buildStyledInfoCard(
                                 '28/11/2024\n07:30 am',
@@ -172,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                                 'Proxima cita Médica',
                                 Icons.calendar_today),
                           ),
-                          Container(
+                          SizedBox(
                             width: (MediaQuery.of(context).size.width / 2) - 26,
                             child: _buildStyledInfoCard('1', 'Recordatorios',
                                 'Recordatorios', Icons.notifications),
@@ -348,60 +360,101 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildStyledInfoCard(
       String value, String unit, String description, IconData icon) {
-    return Container(
-      width: 180, // Made the card slightly wider
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 5,
-            offset: Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(icon, color: Colors.purple, size: 24),
-              Flexible(
+    return GestureDetector(
+      onTap: () {
+        if (description == 'Nivel de glucosa') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Chat(
+                initialMessage: 'Quiero agregar mi nuevo nivel de glucosa',
+              ),
+            ),
+          );
+        } else if (description == 'Sugerencias de Farmacias') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Chat(
+                initialMessage: 'Quiero saber las farmacias cercanas',
+              ),
+            ),
+          );
+        } else if (description == 'Recordatorios') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Chat(
+                initialMessage: 'Quiero ver mis recordatorios',
+              ),
+            ),
+          );
+        } else if (description == 'Proxima cita Médica') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Chat(
+                initialMessage: 'Quiero saber mi próxima cita médica',
+              ),
+            ),
+          );
+        }
+      },
+      child: Container(
+        width: 180, // Made the card slightly wider
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 5,
+              offset: Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(icon, color: Colors.purple, size: 24),
+                Flexible(
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 20, // Adjusted font size for better fit
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (unit.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
-                  value,
+                  unit,
                   style: TextStyle(
-                    fontSize: 20, // Adjusted font size for better fit
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    fontSize: 14,
+                    color: Colors.grey,
                   ),
                 ),
               ),
-            ],
-          ),
-          if (unit.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: Text(
-                unit,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
+            SizedBox(height: 10),
+            Text(
+              description,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
               ),
             ),
-          SizedBox(height: 10),
-          Text(
-            description,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -447,14 +500,14 @@ class _HomePageState extends State<HomePage> {
                       leading: Icon(Icons.lock),
                       title: Text('Cambiar contraseña'),
                       onTap: () {
-                        // Acción para cambiar contraseña
+                        _showChangePasswordDialog(context);
                       },
                     ),
                     ListTile(
                       leading: Icon(Icons.email),
                       title: Text('Cambiar Email'),
                       onTap: () {
-                        // Acción para cambiar email
+                        _showChangeEmailDialog(context);
                       },
                     ),
                     ListTile(
@@ -476,6 +529,84 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+// Función para mostrar el diálogo de cambiar contraseña
+  void _showChangePasswordDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final TextEditingController _oldPasswordController =
+            TextEditingController();
+        final TextEditingController _newPasswordController =
+            TextEditingController();
+        return AlertDialog(
+          title: Text('Cambiar contraseña'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _oldPasswordController,
+                decoration: InputDecoration(hintText: 'Contraseña anterior'),
+                obscureText: true,
+              ),
+              TextField(
+                controller: _newPasswordController,
+                decoration: InputDecoration(hintText: 'Nueva contraseña'),
+                obscureText: true,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Lógica para cambiar la contraseña
+                Navigator.of(context).pop();
+              },
+              child: Text('Aceptar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+// Función para mostrar el diálogo de cambiar email
+  void _showChangeEmailDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final TextEditingController _emailController = TextEditingController();
+        return AlertDialog(
+          title: Text('Cambiar Email'),
+          content: TextField(
+            controller: _emailController,
+            decoration: InputDecoration(hintText: 'Nuevo Email'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Lógica para cambiar el email
+                Navigator.of(context).pop();
+              },
+              child: Text('Aceptar'),
+            ),
+          ],
         );
       },
     );

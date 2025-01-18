@@ -3,6 +3,8 @@ import 'package:flutter/services.dart'; // Importar paquete para cambiar el colo
 import 'home.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }

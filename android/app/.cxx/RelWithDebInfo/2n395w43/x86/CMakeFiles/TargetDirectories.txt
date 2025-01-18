@@ -1,0 +1,2 @@
+C:/Users/GianDroxz/Desktop/chatbotIA_movil/android/app/.cxx/RelWithDebInfo/2n395w43/x86/CMakeFiles/edit_cache.dir
+C:/Users/GianDroxz/Desktop/chatbotIA_movil/android/app/.cxx/RelWithDebInfo/2n395w43/x86/CMakeFiles/rebuild_cache.dir

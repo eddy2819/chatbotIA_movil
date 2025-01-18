@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:chatbotia_movil/login.dart';
- // Importar la página de inicio de sesión
+// Importar la página de inicio de sesión
 
 void main() {
   runApp(IntroPage());
 }
 
 class IntroPage extends StatelessWidget {
+  const IntroPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Importar paquete para cambiar el color de la barra de estado
 
 class RegistroPage extends StatefulWidget {
+  const RegistroPage({super.key});
+
   @override
   _RegistroPageState createState() => _RegistroPageState();
 }
