@@ -1,16 +1,45 @@
-class ChatService {
-  Future<List<Map<String, dynamic>>> fetchMessages() async {
-    // Simular un retraso de red
-    await Future.delayed(Duration(seconds: 1));
-    return [
-      {"text": "Hola, ¿en qué puedo ayudarte?", "isSender": false},
-      {"text": "Quiero cargar un archivo.", "isSender": true},
-    ];
-  }
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
-  Future<Map<String, dynamic>> sendMessage(String message) async {
-    // Simular un retraso de red
-    await Future.delayed(Duration(seconds: 1));
-    return {"text": "Gracias por tu mensaje: $message", "isSender": false};
+class ChatService {
+  final String apiUrl = 'https://chatbotia-backend.onrender.com';
+
+  Future<Map<String, dynamic>> sendQuery(String queryType, String query) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+
+    if (token == null) {
+      throw Exception(
+          'No se encontró el token de acceso. Por favor, inicie sesión nuevamente.');
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/chat'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'query_type': queryType,
+          'query': query,
+          'user_id': '123', // Usar el user_id predefinido
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        prefs.remove('access_token'); // Elimina el token almacenado
+        throw Exception(
+            'Token inválido o expirado. Por favor, inicie sesión nuevamente.');
+      } else {
+        throw Exception('Error: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      print('Error en la solicitud al backend: $e');
+      throw Exception('No se pudo conectar con el servidor. Detalles: $e');
+    }
   }
 }

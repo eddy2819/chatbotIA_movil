@@ -42,8 +42,10 @@ dependencies:
   speech_to_text: ^7.0.0
   http: ^1.2.2
   oauth2: ^2.0.0
+  flutter_dotenv: ^5.2.1
+  shared_preferences: ^2.3.5
 
-  
+
 
 dev_dependencies:
   flutter_test:
