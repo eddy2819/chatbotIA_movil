@@ -29,10 +29,14 @@ class AuthService {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('access_token', data['access_token']);
+      await prefs.setString('access_token', data['access_token'] ?? '');
+      await prefs.setString(
+          'user_name', data['name'] ?? ''); // Guardar el nombre
       print('Token almacenado: ${data['access_token']}');
+      print('Nombre almacenado: ${data['name']}');
       return data;
     } else {
+      print('Error en el inicio de sesión: ${response.body}');
       throw Exception('Failed to login');
     }
   }
@@ -58,7 +62,7 @@ class AuthService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      await prefs.setString('access_token', data['access_token']);
+      await prefs.setString('access_token', data['access_token'] ?? '');
       print('Token renovado: ${data['access_token']}');
     } else {
       throw Exception('Error al renovar el token.');

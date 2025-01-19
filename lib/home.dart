@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Importar paquete para cambiar el color de la barra de estado
 import 'package:chatbotia_movil/chat_home.dart';
-import 'package:chatbotia_movil/chat.dart'; // Import the file where Chat is defined
+import 'package:chatbotia_movil/chat.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(AssisMedApp());
@@ -16,9 +17,8 @@ class AssisMedApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: HomePage(),
       routes: {
-        '/': (context) => HomePage(), // Definir la ruta para HomePage
-        '/chatbot': (context) =>
-            ChatbotPage(), // Definir la ruta para ChatbotPage
+        '/': (context) => HomePage(),
+        '/chatbot': (context) => ChatbotPage(),
       },
     );
   }
@@ -33,27 +33,47 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool _showOverlay = false;
+  String? userName; // Variable para almacenar el nombre del usuario
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedName = prefs.getString('name'); // Cambiar a 'name'
+
+    if (storedName != null) {
+      print('Nombre recuperado correctamente: $storedName');
+      setState(() {
+        userName = storedName;
+      });
+    } else {
+      print('No se encontró ningún nombre almacenado.');
+      setState(() {
+        userName =
+            'Cargando...'; // Valor estático para verificar el renderizado
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Obtener el tamaño de la pantalla
     final screenSize = MediaQuery.of(context).size;
 
-    // Cambiar el color de la barra de estado y la barra de navegación
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.white, // Color de la barra de estado
-      statusBarIconBrightness:
-          Brightness.dark, // Color de los íconos de la barra de estado
-      systemNavigationBarColor: Colors.white, // Color de la barra de navegación
-      systemNavigationBarIconBrightness:
-          Brightness.dark, // Color de los íconos de la barra de navegación
+      statusBarColor: Colors.white,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
     ));
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor:
-            Colors.white, // Asegurar que el fondo del AppBar sea blanco
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: GestureDetector(
           onLongPress: () {
@@ -74,7 +94,7 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(
                 Icons.notifications,
                 color: Colors.black,
-                size: 31, // Increased icon size
+                size: 31,
               ),
               onPressed: () {
                 Navigator.push(
@@ -97,10 +117,9 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Center(
                   child: Image.asset(
-                    'assets/logo.png', // Add your logo asset here
-                    height: screenSize.height * 0.15, // Responsive logo size
-                    color:
-                        null, // Removes background if the logo is a transparent PNG
+                    'assets/logo.png',
+                    height: screenSize.height * 0.15,
+                    color: null,
                   ),
                 ),
                 Container(
@@ -118,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       SizedBox(height: 20),
                       Text(
-                        'Bienvenido Jhon',
+                        'Bienvenido, ${userName ?? 'Cargando...'}',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -197,55 +216,13 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          if (_showOverlay)
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _showOverlay = false;
-                });
-              },
-              child: Container(
-                color: Colors.black54,
-                child: Center(
-                  child: Container(
-                    width: screenSize.width * 0.8, // Responsive overlay width
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.check_circle, color: Colors.green, size: 48),
-                        SizedBox(height: 10),
-                        Text(
-                          'Estimado usuario, su mensaje de alerta fue enviado',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                        ),
-                        SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _showOverlay = false;
-                            });
-                          },
-                          child: Text('Aceptar'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
             icon: IconButton(
-              icon: Icon(Icons.home, size: 32), // Increased icon size
+              icon: Icon(Icons.home, size: 32),
               onPressed: () {
                 // Acción para el ícono de home
               },
@@ -254,17 +231,16 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: IconButton(
-              icon:
-                  Icon(Icons.play_circle_fill, size: 32), // Increased icon size
+              icon: Icon(Icons.play_circle_fill, size: 32),
               onPressed: () {
-                // Acción para el ícono de play_circle_fill
+                // Acción para el ícono de video
               },
             ),
             label: 'Video',
           ),
           BottomNavigationBarItem(
             icon: IconButton(
-              icon: Icon(Icons.chat, size: 32), // Increased icon size
+              icon: Icon(Icons.chat, size: 32),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -287,14 +263,14 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                   ),
-                ); // Navegar a ChatbotPage con animación
+                );
               },
             ),
             label: 'Chat',
           ),
           BottomNavigationBarItem(
             icon: IconButton(
-              icon: Icon(Icons.settings, size: 32), // Increased icon size
+              icon: Icon(Icons.settings, size: 32),
               onPressed: () {
                 _showSettingsModal(context); // Mostrar modal de configuración
               },
@@ -361,47 +337,9 @@ class _HomePageState extends State<HomePage> {
   Widget _buildStyledInfoCard(
       String value, String unit, String description, IconData icon) {
     return GestureDetector(
-      onTap: () {
-        if (description == 'Nivel de glucosa') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Chat(
-                initialMessage: 'Quiero agregar mi nuevo nivel de glucosa',
-              ),
-            ),
-          );
-        } else if (description == 'Sugerencias de Farmacias') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Chat(
-                initialMessage: 'Quiero saber las farmacias cercanas',
-              ),
-            ),
-          );
-        } else if (description == 'Recordatorios') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Chat(
-                initialMessage: 'Quiero ver mis recordatorios',
-              ),
-            ),
-          );
-        } else if (description == 'Proxima cita Médica') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Chat(
-                initialMessage: 'Quiero saber mi próxima cita médica',
-              ),
-            ),
-          );
-        }
-      },
+      onTap: () {},
       child: Container(
-        width: 180, // Made the card slightly wider
+        width: 180,
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -425,7 +363,7 @@ class _HomePageState extends State<HomePage> {
                   child: Text(
                     value,
                     style: TextStyle(
-                      fontSize: 20, // Adjusted font size for better fit
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -459,11 +397,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-// Función para mostrar el modal de configuración
   void _showSettingsModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Permite ajustar la altura según el contenido
+      isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -518,10 +455,13 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.palette),
-                      title: Text('Personalizar diseño'),
-                      onTap: () {
-                        // Acción para personalizar diseño
+                      leading: Icon(Icons.logout),
+                      title: Text('Cerrar sesión'),
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.remove('access_token');
+                        await prefs.remove('name');
+                        Navigator.pushReplacementNamed(context, '/login');
                       },
                     ),
                   ],
@@ -534,7 +474,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-// Función para mostrar el diálogo de cambiar contraseña
   void _showChangePasswordDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -580,7 +519,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-// Función para mostrar el diálogo de cambiar email
   void _showChangeEmailDialog(BuildContext context) {
     showDialog(
       context: context,

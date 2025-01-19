@@ -60,6 +60,7 @@ class _RegistroPageState extends State<RegistroPage> {
           'password': _passwordController.text,
           'ci': _ciController.text,
           'phone': _phoneController.text,
+          'rol': 'Paciente', // Agregar el rol por defecto
         };
 
         // Hacer la solicitud POST

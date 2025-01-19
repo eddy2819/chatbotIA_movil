@@ -45,11 +45,14 @@ class _LoginPageState extends State<LoginPage> {
           _passwordController.text,
         );
 
-        // Guardar el token de acceso
+        // Guardar el token de acceso y el nombre
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('access_token', response['access_token']);
+        await prefs.setString('access_token', response['access_token'] ?? '');
+        await prefs.setString('name', response['name'] ?? '');
         final token = prefs.getString('access_token');
+        final userName = prefs.getString('name');
         print('Token almacenado: $token');
+        print('Nombre almacenado: $userName');
 
         print('Usuario inició sesión exitosamente');
         Navigator.pushReplacement(
@@ -57,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
           MaterialPageRoute(builder: (context) => HomePage()),
         );
       } catch (e) {
+        print('Error en el inicio de sesión: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Email o contraseña equivocadas')),
         );
