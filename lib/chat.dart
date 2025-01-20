@@ -3,12 +3,15 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:chatbotia_movil/services/chat_service.dart';
 
 class Chat extends StatefulWidget {
   final List<Map<String, dynamic>>? initialMessages;
   final String initialMessage;
+  final String userId;
+  final String queryType;
 
-  const Chat({super.key, this.initialMessages, this.initialMessage = ''});
+  const Chat({super.key, this.initialMessages, this.initialMessage = '', required this.userId, required this.queryType, });
 
   @override
   _ChatState createState() => _ChatState();
@@ -19,6 +22,7 @@ class _ChatState extends State<Chat> {
   final TextEditingController _messageController = TextEditingController();
   FlutterSoundRecorder? _recorder;
   bool _isRecording = false;
+  final ChatService _chatService = ChatService();
 
   @override
   void initState() {
@@ -58,7 +62,7 @@ class _ChatState extends State<Chat> {
     super.dispose();
   }
 
-  void _sendMessage() {
+  void _sendMessage() async {
     final text = _messageController.text;
     if (text.isEmpty) return;
 
@@ -68,13 +72,24 @@ class _ChatState extends State<Chat> {
 
     _messageController.clear();
 
-    // Simular respuesta automática
-    Future.delayed(Duration(seconds: 1), () {
+    try{
+      final response = await _chatService.sendQuery(widget.queryType, text); 
       setState(() {
-        _messages
-            .add({"text": "Gracias por tu mensaje: $text", "isSender": false});
+        _messages.add({
+          "text": response['response'] ?? 'Sin respuesta',
+          "isSender": false,
+        });
       });
-    });
+    } catch (e){
+      setState(() {
+        _messages.add({
+          "text": 'Error al conectar con el servidor. Detalles: $e',
+          "isSender": false,
+        });
+      });
+    }
+
+   
   }
 
   void _pickFile() async {

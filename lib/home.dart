@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'dart:convert'; // Add this line to import the 'dart:convert' package
 import 'package:flutter/services.dart'; // Importar paquete para cambiar el color de la barra de estado
 import 'package:chatbotia_movil/chat_home.dart';
 import 'package:chatbotia_movil/chat.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(AssisMedApp());
@@ -82,10 +84,13 @@ class _HomePageState extends State<HomePage> {
             });
           },
           child: Icon(
-            Icons.warning,
+            Icons.emergency_share,
             color: const Color.fromARGB(255, 90, 32, 32),
             size: 31,
           ),
+          onTap: (){
+            _showPanicButtonDialog(context, '2', userName ?? 'Usuario');
+          },
         ),
         actions: [
           Padding(
@@ -102,6 +107,9 @@ class _HomePageState extends State<HomePage> {
                   MaterialPageRoute(
                     builder: (context) => Chat(
                       initialMessage: 'Quisiera saber mis Recordatorios',
+                      userId: '1', // Add the appropriate userId here
+                      queryType:
+                          'defaultQueryType', // Define the appropriate queryType here
                     ),
                   ),
                 );
@@ -137,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       SizedBox(height: 20),
                       Text(
-                        'Bienvenido, ${userName ?? 'Cargando...'}',
+                        'Bienvenido, ${userName ?? 'Eddy'}',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -397,6 +405,235 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _showPanicButtonDialog(
+      BuildContext context, String patientId, String name) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmar alerta'),
+          content: Text(
+              '¿Está seguro de que desea enviar una alerta de nivel de glucosa alta?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Enviar'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _sendPanicButtonRequest(context, patientId, name);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _sendPanicButtonRequest(
+      BuildContext context, String patientId, String name) async {
+    final url = Uri.parse(
+        'https://chatbotia-backend.onrender.com/panic_button/trigger');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'patient_id': patientId,
+        'name': name,
+        'reason': 'Nivel de glucosa alta',
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      _showConfirmationDialog(context);
+    } else {
+      _showErrorDialog(context);
+    }
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alerta enviada'),
+          content: Text(
+              'La alerta de nivel de glucosa alta ha sido enviada exitosamente.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Aceptar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(
+              'Hubo un error al enviar la alerta. Por favor, inténtelo de nuevo.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Aceptar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEmergencyForm(BuildContext context, String patientId) {
+    final _formKey = GlobalKey<FormState>();
+    final _nameController = TextEditingController();
+    final _doctorContactController = TextEditingController();
+    final _familyContactController = TextEditingController();
+    final _emergencyReasonController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Configurar botón de emergencia'),
+          content: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(labelText: 'Nombre'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese su nombre';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: _doctorContactController,
+                    decoration:
+                        InputDecoration(labelText: 'Contacto del doctor'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese el contacto del doctor';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: _familyContactController,
+                    decoration: InputDecoration(labelText: 'Contacto familiar'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese el contacto familiar';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: _emergencyReasonController,
+                    decoration:
+                        InputDecoration(labelText: 'Razón de emergencia'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la razón de emergencia';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Guardar'),
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _sendEmergencyData(
+                    context,
+                    patientId,
+                    _nameController.text,
+                    _doctorContactController.text,
+                    _familyContactController.text,
+                    _emergencyReasonController.text,
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _sendEmergencyData(
+    BuildContext context,
+    String patientId,
+    String name,
+    String doctorContact,
+    String familyContact,
+    String emergencyReason,
+  ) async {
+    final url =
+        Uri.parse('https://chatbotia-backend.onrender.com/panic_button/config');
+
+    final requestBody = {
+      "patient_id": patientId,
+      "name": name,
+      "doctor_contact": doctorContact,
+      "family_contact": familyContact,
+      "emergency_reasons": [emergencyReason]
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Configuración guardada con éxito')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al guardar la configuración')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error de conexión: $e')),
+      );
+    }
+  }
+
   void _showSettingsModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -452,6 +689,14 @@ class _HomePageState extends State<HomePage> {
                       title: Text('Notificaciones'),
                       onTap: () {
                         // Acción para notificaciones
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.emergency_share_outlined),
+                      title: Text('Confirgurar boton de emergencia'),
+                      onTap: () {
+                        _showEmergencyForm(context, '2');
+                        // Acción para configurar el botón de emergencia
                       },
                     ),
                     ListTile(

@@ -4,6 +4,7 @@ import 'home.dart';
 import 'chat_home.dart';
 import 'login.dart';
 import 'register.dart';
+import 'chat.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'intro.dart';
@@ -39,6 +40,10 @@ class MyApp extends StatelessWidget {
             RegistroPage(), // Definir la ruta para la página de registro
         '/intro': (context) =>
             IntroPage(), // Definir la ruta para la página de introducción
+        '/chat': (context) => Chat(
+              userId: '1',
+              queryType: 'text',
+        ), 
       },
     );
   }
