@@ -6,13 +6,13 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:chatbotia_movil/services/chat_service.dart';
 
-class Chat extends StatefulWidget {
+class ChatPres extends StatefulWidget {
   final List<Map<String, dynamic>>? initialMessages;
   final String initialMessage;
   final String userId;
   final String queryType;
 
-  const Chat({
+  const ChatPres({
     super.key,
     this.initialMessages,
     this.initialMessage = '',
@@ -21,10 +21,10 @@ class Chat extends StatefulWidget {
   });
 
   @override
-  _ChatState createState() => _ChatState();
+  _ChatPresState createState() => _ChatPresState();
 }
 
-class _ChatState extends State<Chat> {
+class _ChatPresState extends State<ChatPres> {
   final List<Map<String, dynamic>> _messages = [];
   final TextEditingController _messageController = TextEditingController();
   FlutterSoundRecorder? _recorder;
@@ -41,14 +41,14 @@ class _ChatState extends State<Chat> {
       _messages.add({"text": widget.initialMessage, "isSender": true});
     }
     _recorder = FlutterSoundRecorder();
-    // _initializeRecorder();
+    _initializeRecorder();
     _requestPermissions();
   }
 
-  // Future<void> _initializeRecorder() async {
-  //   await _recorder!.openRecorder();
-  //   await Permission.microphone.request();
-  // }
+  Future<void> _initializeRecorder() async {
+    await _recorder!.openRecorder();
+    await Permission.microphone.request();
+  }
 
   Future<void> _requestPermissions() async {
     if (await Permission.camera.isDenied) {

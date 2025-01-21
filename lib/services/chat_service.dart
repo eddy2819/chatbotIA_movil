@@ -16,7 +16,8 @@ class ChatService {
       );
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+         final decodedBody = utf8.decode(response.bodyBytes);
+        return jsonDecode(decodedBody);
       } else {
         throw Exception(
           'Error en la solicitud: ${response.statusCode}, ${response.body}',

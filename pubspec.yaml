@@ -44,6 +44,9 @@ dependencies:
   oauth2: ^2.0.0
   flutter_dotenv: ^5.2.1
   shared_preferences: ^2.3.5
+  google_maps_flutter: ^2.10.0
+  flutter_tts: ^4.2.1
+  geolocator: ^13.0.2
 
 
 

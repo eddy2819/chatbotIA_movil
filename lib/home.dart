@@ -1,9 +1,13 @@
+import 'package:chatbotia_movil/ChatPage.dart';
+import 'package:chatbotia_movil/chat_screem.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert'; // Add this line to import the 'dart:convert' package
 import 'package:flutter/services.dart'; // Importar paquete para cambiar el color de la barra de estado
 import 'package:chatbotia_movil/chat_home.dart';
+import 'package:chatbotia_movil/PharmacyChatPage.dart'; // Add this line to import PharmacyChatPage
 import 'package:chatbotia_movil/chat.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:chatbotia_movil/services/PrescriptionService.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
@@ -35,12 +39,26 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool _showOverlay = false;
+  bool _isVisible= false;
+  Color _cardColor1 = Colors.white;
+  Color _cardColor2 = Colors.white;
+  Color _cardColor3 = Colors.white;
   String? userName; // Variable para almacenar el nombre del usuario
+  List<Map<String, dynamic>> _messages =
+      []; // Define _messages as a list of maps
 
   @override
   void initState() {
     super.initState();
     _loadUserName();
+  }
+
+  void _startAnimation() {
+    Future.delayed(Duration(milliseconds: 500), () {
+      setState(() {
+        _isVisible = true;
+      });
+    });
   }
 
   Future<void> _loadUserName() async {
@@ -64,6 +82,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final buttonWidth = (screenSize.width / 2) - 26;
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.white,
@@ -88,7 +107,7 @@ class _HomePageState extends State<HomePage> {
             color: const Color.fromARGB(255, 90, 32, 32),
             size: 31,
           ),
-          onTap: (){
+          onTap: () {
             _showPanicButtonDialog(context, '2', userName ?? 'Usuario');
           },
         ),
@@ -145,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       SizedBox(height: 20),
                       Text(
-                        'Bienvenido, ${userName ?? 'Eddy'}',
+                        'Bienvenido Eddy ${userName ?? 'Eddy'}',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -158,15 +177,15 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Expanded(
                               child: _buildInfoCard(
-                                  '110', 'Mg/dl', 'Glucosa Normal')),
+                                  '100', 'Mg/dl', 'Glucosa Normal')),
                           SizedBox(width: 10),
                           Expanded(
                               child: _buildInfoCard(
-                                  '200', 'Mg/dl', 'Glucosa muy alta')),
+                                  '210', 'Mg/dl', 'Glucosa muy alta')),
                           SizedBox(width: 10),
                           Expanded(
                               child: _buildInfoCard(
-                                  '70', 'Mg/dl', 'Glucosa muy baja')),
+                                  '60', 'Mg/dl', 'Glucosa muy baja')),
                         ],
                       ),
                     ],
@@ -182,18 +201,98 @@ class _HomePageState extends State<HomePage> {
                         runSpacing: 10,
                         alignment: WrapAlignment.spaceBetween,
                         children: [
-                          SizedBox(
-                            width: (MediaQuery.of(context).size.width / 2) - 26,
-                            child: _buildStyledInfoCard('110', 'Mg/dl',
-                                'Nivel de glucosa', Icons.bloodtype),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatPres(
+                                    initialMessages: [],
+                                    initialMessage: 'Consultar receta',
+                                    userId:
+                                        '1', // Ajusta el userId según sea necesario
+                                    queryType:
+                                        'consultaReceta', // Ajusta el queryType según sea necesario
+                                  ),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Colors.transparent, // Fondo transparente
+                              shadowColor: Colors.transparent, // Sin sombra
+                              padding: EdgeInsets.zero, // Sin padding
+                            ),
+                            child: SizedBox(
+                              width:
+                                  (MediaQuery.of(context).size.width / 2) - 26,
+                              child: _buildStyledInfoCard(
+                                '1',
+                                'Nuevo',
+                                'Recordatorio',
+                                Icons.notifications,
+                              ),
+                            ),
                           ),
-                          SizedBox(
-                            width: (MediaQuery.of(context).size.width / 2) - 26,
-                            child: _buildStyledInfoCard(
-                                '3',
-                                'Farmacias cercanas',
-                                'Sugerencias de Farmacias',
-                                Icons.local_pharmacy),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PharmacyChatPage(initialMessage: "farmacias"),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: Container(
+                              width: buttonWidth,
+                              padding: EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    blurRadius: 5,
+                                    offset: Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Icon(Icons.local_pharmacy, color: Colors.purple, size: 24),
+                                      Flexible(
+                                        child: Text(
+                                          '3',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Sugerencias de Farmacias',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -203,21 +302,124 @@ class _HomePageState extends State<HomePage> {
                         runSpacing: 10,
                         alignment: WrapAlignment.spaceBetween,
                         children: [
-                          SizedBox(
-                            width: (MediaQuery.of(context).size.width / 2) - 26,
-                            child: _buildStyledInfoCard(
-                                '28/11/2024\n07:30 am',
-                                '',
-                                'Proxima cita Médica',
-                                Icons.calendar_today),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Acción para próxima cita médica
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: Container(
+                              width: buttonWidth,
+                              padding: EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    blurRadius: 5,
+                                    offset: Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Icon(Icons.calendar_today, color: Colors.purple, size: 24),
+                                      Flexible(
+                                        child: Text(
+                                          'lunes\n07:30 am',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Proxima cita Médica',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          SizedBox(
-                            width: (MediaQuery.of(context).size.width / 2) - 26,
-                            child: _buildStyledInfoCard('1', 'Recordatorios',
-                                'Recordatorios', Icons.notifications),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatPage(initialMessage: "recetas"),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: Container(
+                              width: buttonWidth,
+                              padding: EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    blurRadius: 5,
+                                    offset: Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Icon(Icons.monetization_on_sharp, color: Colors.purple, size: 24),
+                                      Flexible(
+                                        child: Text(
+                                          '1',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Consultar recetas',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ],
                       ),
+                      
                     ],
                   ),
                 ),
@@ -403,6 +605,40 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void _fetchPrescription() async {
+    final PrescriptionService prescriptionService = PrescriptionService();
+
+    try {
+      final response = await prescriptionService.getPrescriptions('12345');
+
+      setState(() {
+        _messages.add({
+          "text": _translatePrescription(response),
+          "isSender": false,
+        });
+      });
+    } catch (e) {
+      setState(() {
+        _messages.add({
+          "text": 'Error al obtener las recetas: $e',
+          "isSender": false,
+        });
+      });
+    }
+  }
+
+  String _translatePrescription(Map<String, dynamic> data) {
+    if (data.containsKey('prescriptions')) {
+      final prescriptions = data['prescriptions']
+          .map((p) =>
+              '${p["medication"]}: ${p["instructions"]} (${p["dosage"]})')
+          .join('\n');
+      return 'Recetas encontradas:\n$prescriptions\nCosto total: \$${data["total_cost"]}';
+    } else {
+      return 'No se encontraron recetas para este paciente.';
+    }
   }
 
   void _showPanicButtonDialog(

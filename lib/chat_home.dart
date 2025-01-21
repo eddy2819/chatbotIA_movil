@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:flutter_tts/flutter_tts.dart';
 import 'services/chat_service.dart';
-import 'chat.dart'; // Adjust the path as necessary
+import 'chat.dart';
 
 class ChatbotPage extends StatefulWidget {
   @override
@@ -10,7 +12,54 @@ class ChatbotPage extends StatefulWidget {
 class _ChatbotPageState extends State<ChatbotPage> {
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
+  late stt.SpeechToText _speechToText;
+  bool _isListening = false;
+  FlutterTts _flutterTts = FlutterTts();
+  String _lastSpokenWords = '';
+  bool _isQueryFromMic = false; // Nuevo flag para verificar si la consulta fue por el micrófono
 
+  @override
+  void initState() {
+    super.initState();
+    _speechToText = stt.SpeechToText();
+  }
+
+  // Inicia la escucha de voz
+  Future<void> _startListening() async {
+    bool available = await _speechToText.initialize();
+    if (available) {
+      setState(() {
+        _isListening = true;
+      });
+      _speechToText.listen(onResult: (result) {
+        setState(() {
+          _lastSpokenWords = result.recognizedWords;
+          _messageController.text = _lastSpokenWords;
+        });
+      });
+    } else {
+      setState(() {
+        _isListening = false;
+      });
+    }
+  }
+
+  // Detiene la escucha de voz
+  Future<void> _stopListening() async {
+    await _speechToText.stop();
+    setState(() {
+      _isListening = false;
+    });
+  }
+
+  // Función para leer el texto en voz alta
+  Future<void> _speak(String text) async {
+    if (text.isNotEmpty) {
+      await _flutterTts.speak(text);
+    }
+  }
+
+  // Envía la consulta al servicio y lee la respuesta en voz alta solo si fue activado por el micrófono
   Future<void> _sendQuery(String queryType, String query) async {
     if (query.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -38,12 +87,25 @@ class _ChatbotPageState extends State<ChatbotPage> {
           ),
         ),
       );
+
+      // Solo leer la respuesta si la consulta fue activada por el micrófono
+      if (_isQueryFromMic) {
+        _speak(response['response'] ?? 'Sin respuesta');
+        setState(() {
+          _isQueryFromMic = false; // Resetear el flag después de leer la respuesta
+        });
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text('Error al conectar con el servidor. Detalles: $e')),
       );
     }
+  }
+
+  // Función para manejar el envío de mensaje manual
+  void _sendManualQuery(String queryType, String query) {
+    _sendQuery(queryType, query);
   }
 
   @override
@@ -101,9 +163,14 @@ class _ChatbotPageState extends State<ChatbotPage> {
                 ),
                 SizedBox(width: 8),
                 IconButton(
+                  icon: Icon(Icons.mic, color: _isListening ? Colors.red : Colors.purple),
+                  onPressed: _isListening ? _stopListening : _startListening,
+                ),
+                IconButton(
                   icon: Icon(Icons.send, color: Colors.purple),
                   onPressed: () {
                     final message = _messageController.text.trim();
+                    _isQueryFromMic = true; // Marcar que la consulta proviene del micrófono
                     _sendQuery('inicio', message);
                   },
                 ),
@@ -130,7 +197,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                     ),
                   ),
                   onPressed: () {
-                    _sendQuery('diabetes', '¿Qué es la diabetes?');
+                    _sendManualQuery('diabetes', '¿Qué es la diabetes?');
                   },
                   child: Text(
                     '¿Qué es la diabetes?',
@@ -145,7 +212,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                     ),
                   ),
                   onPressed: () {
-                    _sendQuery('inicio', 'hola');
+                    _sendManualQuery('inicio', 'hola');
                   },
                   child: Text(
                     'Iniciar chat',

@@ -5,6 +5,9 @@ import 'chat_home.dart';
 import 'login.dart';
 import 'register.dart';
 import 'chat.dart';
+import 'chat_screem.dart';
+import 'package:chatbotia_movil/ChatPage.dart';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'intro.dart';
@@ -43,7 +46,13 @@ class MyApp extends StatelessWidget {
         '/chat': (context) => Chat(
               userId: '1',
               queryType: 'text',
+        ),
+        '/chat_pres': (context) => ChatPres(
+              userId: '1',
+              queryType: 'text',
         ), 
+        '/chat_page': (context) => ChatPage(initialMessage: 'Hello!'),
+        
       },
     );
   }

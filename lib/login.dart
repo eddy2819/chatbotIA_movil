@@ -61,9 +61,9 @@ class _LoginPageState extends State<LoginPage> {
         );
       } catch (e) {
         print('Error en el inicio de sesión: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Email o contraseña equivocadas')),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Email o contraseña equivocadas')),
+        
       }
     }
   }
