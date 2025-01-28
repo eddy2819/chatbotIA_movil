@@ -110,7 +110,10 @@ class _PharmacyChatPageState extends State<PharmacyChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chat de Farmacias"),
+        title: Text("Chat de Farmacias",style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Column(
         children: [
@@ -138,20 +141,30 @@ class _PharmacyChatPageState extends State<PharmacyChatPage> {
                     margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: isUser ? Colors.blue : Colors.grey[300],
+                      color: isUser ? Colors.purple.shade100 : Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       message["text"]!,
-                      style: TextStyle(color: isUser ? Colors.white : Colors.black),
+                      style: TextStyle(fontSize: 16),
                     ),
                   ),
                 );
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade300,
+                  blurRadius: 4,
+                  offset: Offset(0, -2)
+                )
+              ]
+            ),
             child: Row(
               children: [
                 Expanded(
@@ -159,12 +172,12 @@ class _PharmacyChatPageState extends State<PharmacyChatPage> {
                     controller: _controller,
                     decoration: InputDecoration(
                       hintText: "Escribe un mensaje...",
-                      border: OutlineInputBorder(),
+                      border: InputBorder.none,
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: Icon(Icons.send, color: Colors.purple,),
                   onPressed: _sendMessage,
                 ),
               ],

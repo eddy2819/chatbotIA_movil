@@ -5,6 +5,8 @@ import 'dart:convert'; // Add this line to import the 'dart:convert' package
 import 'package:flutter/services.dart'; // Importar paquete para cambiar el color de la barra de estado
 import 'package:chatbotia_movil/chat_home.dart';
 import 'package:chatbotia_movil/PharmacyChatPage.dart'; // Add this line to import PharmacyChatPage
+import 'package:chatbotia_movil/ExamChatPage.dart'; // Add this line to import ExamChatPage
+import 'package:chatbotia_movil/PersonalizedMonitoringPage.dart'; // Add this line to import PersonalizedMonitoringPage
 import 'package:chatbotia_movil/chat.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chatbotia_movil/services/PrescriptionService.dart';
@@ -164,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       SizedBox(height: 20),
                       Text(
-                        'Bienvenido Eddy ${userName ?? 'Eddy'}',
+                        'Bienvenido Jose ${userName ?? 'Jose'}',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -346,7 +348,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   SizedBox(height: 10),
                                   Text(
-                                    'Proxima cita Médica',
+                                    'Proxima cita',
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontSize: 14,
@@ -407,6 +409,126 @@ class _HomePageState extends State<HomePage> {
                                   SizedBox(height: 10),
                                   Text(
                                     'Consultar recetas',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ExamChatPage(initialMessage: "examen"),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: Container(
+                              width: buttonWidth,
+                              padding: EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    blurRadius: 5,
+                                    offset: Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Icon(Icons.analytics, color: Colors.purple, size: 24),
+                                      Flexible(
+                                        child: Text(
+                                          '2',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Análisis de Exámenes',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PersonalizedMonitoringPage(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: Container(
+                              width: buttonWidth,
+                              padding: EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    blurRadius: 5,
+                                    offset: Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Icon(Icons.dashboard, color: Colors.purple, size: 24),
+                                      Flexible(
+                                        child: Text(
+                                          'Monitoreo',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Monitoreo Personalizado',
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontSize: 14,

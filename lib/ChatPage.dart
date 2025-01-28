@@ -4,9 +4,10 @@ import 'package:http/http.dart' as http; // Para manejar las peticiones HTTP
 
 class ChatPage extends StatefulWidget {
   final String initialMessage;
+  
 
   const ChatPage({Key? key, required this.initialMessage}) : super(key: key);
-
+  
   @override
   _ChatPageState createState() => _ChatPageState();
 }
@@ -83,7 +84,10 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chat"),
+        title: Text("Chat", style: TextStyle(color: Colors.black)),
+        backgroundColor:Colors.white,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Column(
         children: [
@@ -99,7 +103,7 @@ class _ChatPageState extends State<ChatPage> {
                     margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: isUser ? Colors.blue : Colors.grey[300],
+                      color: isUser ? Colors.purple.shade100 : Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
@@ -111,21 +115,32 @@ class _ChatPageState extends State<ChatPage> {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration:BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade300,
+                  blurRadius: 4,
+                  offset: Offset(0, -2),
+                ),
+              ],
+            ) ,
             child: Row(
               children: [
+               
                 Expanded(
                   child: TextField(
                     controller: _controller,
                     decoration: InputDecoration(
-                      hintText: "Escribe un mensaje...",
+                      hintText: "Escribe tu mensaje...",
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: Icon(Icons.send, color: Colors.purple),
                   onPressed: _sendMessage,
                 ),
               ],
